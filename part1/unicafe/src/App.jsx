@@ -14,6 +14,12 @@ const Button = ({onClickHandler, text}) => {
   )
 }
 
+const StatisticLine = ({text, value}) => {
+  return (
+    <div>{text} {value}</div>
+  )
+}
+
 const Statistics = ({feedback}) => {
   const all = feedback.good + feedback.neutral + feedback.bad
   const positive = feedback.good / (all / 100)
@@ -26,12 +32,12 @@ const Statistics = ({feedback}) => {
   }
   return (
     <div>
-      <div>good {feedback.good}</div>
-      <div>neutral {feedback.neutral}</div>
-      <div>bad {feedback.bad}</div>
-      <div>all {all}</div>
-      <div>average {average}</div>
-      <div>positive {positive} %</div>
+      <StatisticLine text={'good'} value={feedback.good}/>
+      <StatisticLine text={'neutral'} value={feedback.neutral}/>
+      <StatisticLine text={'bad'} value={feedback.bad}/>
+      <StatisticLine text={'all'} value={all}/>
+      <StatisticLine text={'average'} value={average}/>
+      <StatisticLine text={'positive'} value={positive}/>
     </div>
   )
 }
