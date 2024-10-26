@@ -16,13 +16,16 @@ const Button = ({onClickHandler, text}) => {
 
 const StatisticLine = ({text, value}) => {
   return (
-    <div>{text} {value}</div>
+    <tr>
+      <td>{text}</td>
+      <td>{value} </td>
+    </tr>
   )
 }
 
 const Statistics = ({feedback}) => {
   const all = feedback.good + feedback.neutral + feedback.bad
-  const positive = feedback.good / (all / 100)
+  const positive = (feedback.good / (all / 100)).toString() + " %"
   const average = (feedback.good - feedback.bad) / all
 
   if(all === 0) {
