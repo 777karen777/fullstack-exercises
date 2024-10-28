@@ -1,5 +1,38 @@
 import { useState } from 'react'
 
+const Header = ({text}) => {
+  return (
+    <h1>{text}</h1>
+  )
+}
+
+const ShowAnecdot = ({anecdote}) => {
+  return (
+    <div>{anecdote}</div>
+  )
+}
+
+const ShowVotes = ({votes}) => {
+  return (
+    <div>has {votes} votes</div>
+  )
+}
+
+const Anecdote = ({anecdote, votes}) => {
+  return (
+    <div>      
+      <ShowAnecdot anecdote={anecdote} />
+      <ShowVotes votes={votes} />
+    </div>
+  )
+}
+
+const Button = ({text, clickHandler}) => {
+  return (
+    <button onClick={clickHandler}>{text}</button>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -11,28 +44,34 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
-
   const size = anecdotes.length
-   
+
   const [selected, setSelected] = useState(0)
   const [votes, setVotes] = useState(new Array(size).fill(0))
+
+  const maxVoted = votes.indexOf(Math.max(...votes))
+  // console.log('Max voted: ', maxVoted)
+   
 
   const onVoteClickhandler = () => {
     const newVotes = [...votes]
     newVotes[selected] += 1
-
     setVotes(newVotes)
   }
+  
+  const onNextClickhandler = () => {
+    setSelected(Math.floor(Math.random() * size))
+  }
 
-  console.log(selected)
+  // console.log(selected)
   return (
     <div>
-      <button onClick={onVoteClickhandler}>vote</button>
-      <button onClick={() => {setSelected(Math.floor(Math.random() *  anecdotes.length))}}>Next</button>
-      <div>
-        {anecdotes[selected]}
-        <p>{votes.join(' ')}</p>
-      </div> 
+      <Header text={'Anecdote of the day'}/>
+      <Anecdote anecdote={anecdotes[selected]} votes={votes[selected]}/>
+      <Button text={'vote'} clickHandler={onVoteClickhandler}/>
+      <Button text={'next'} clickHandler={onNextClickhandler}/>
+      <Header text={'Anecdote with most votes'}/>
+      <Anecdote anecdote={anecdotes[maxVoted]} votes={votes[maxVoted]} />
     </div>
   )
 }
