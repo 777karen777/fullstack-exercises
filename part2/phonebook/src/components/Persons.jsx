@@ -1,5 +1,5 @@
 import Person from "./Person"
-const Persons = ({persons, search}) => {
+const Persons = ({persons, search, deletePerson}) => {
     
     const personsToShow = persons.filter(person => {
     return (
@@ -14,6 +14,7 @@ const Persons = ({persons, search}) => {
             <Person
               key={person.name}
               person={person}
+              deletePerson={deletePerson}
             />)}
         </ul>
       </div>

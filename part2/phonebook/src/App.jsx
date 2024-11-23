@@ -31,6 +31,7 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
+
   const handleSearch = (event) => {
     setSearch(event.target.value)
   }
@@ -38,7 +39,7 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     const result = persons.findIndex(person => person.name === newName)
-    console.log(result);
+    // console.log(result);
     if(result !== -1) {
       alert(`${newName} is already added to phonebook`)
     }
@@ -48,12 +49,29 @@ const App = () => {
         .addContact(newPerson)
         .then(newContact => {
           setPersons(persons.concat(newContact))
+          // console.log(persons)
           setNewName('')
           setNewNumber('')
         })
       // const newPersons = persons.concat(newPerson)
       // setPersons(newPersons)
     }    
+  }
+
+  const deletePerson = (name, id) => {
+    const result = confirm(`Delete ${name}`)
+    if(result) {
+      contactService
+        .deleteContact(id)
+        .then(deleted => {
+          setPersons(persons.filter(person => {
+            return person.id !== deleted.id
+          }))
+          // console.log(persons)
+        })
+        .catch((error) => console.log('Operation failed!')
+        )
+    }
   }
 
 
@@ -75,7 +93,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={persons} search={search} />
+      <Persons persons={persons} search={search} deletePerson={deletePerson} />
       
     </div>
   )
