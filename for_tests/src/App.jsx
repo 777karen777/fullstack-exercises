@@ -1,35 +1,47 @@
 import { useState, useEffect } from "react"
 import axios from 'axios'
 import Note from "./components/Note"
+import noteService from "./services/notes"
+
+
 
 const App = () => {
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
 
+  const toggleImportanceOf = (id) => {
+    // const url = `http://localhost:3001/notes/${id}`
+    const noteToChange = notes.find(n => n.id === id)
+    const changedNote = {...noteToChange, important: !noteToChange.important}
 
-    //   //
-    // setTimeout(() => {
-    //   console.log('loop..')
-    //   let i = 0
-    //   while (i < 50000000000) {
-    //     i++
-    //   }
-    //   console.log('end')
-    // }, 5000)
-    // //  
+    // axios.put(url, changedNote)
+    noteService
+      .update(id, changedNote)
+      .then(returnedNote => {
+        setNotes(notes.map(n => n.id === id ? returnedNote : n))
+      })
+      .catch(error => {
+        alert(
+          `the note '${noteToChange.content}' was already deleted from server`
+        )
+        setNotes(notes.filter(n => n.id !== id))
+        // console.log(error)
+      })
+    console.log(`importance of  ${id} needs to be toggled`)
+  }  
 
   const hook = () => {
-    console.log('effect');
-    axios
-      .get('http://localhost:3001/notes')
-      .then(response => {
-        console.log('promise fulfilled');
-        setNotes(response.data)
+    // console.log('effect'); 
+    noteService
+      .getAll()
+      .then(initialNotes => {
+        // console.log('promise fulfilled');
+        setNotes(initialNotes)
       })
   }
   useEffect(hook, [])
-  console.log('render', notes.length, 'notes');
+  // console.log('render', notes.length, 'notes');
   
 
 
@@ -45,11 +57,19 @@ const App = () => {
     const noteObject = {
       content: newNote,
       important: Math.random() < 0.5,
-      id: String(notes.length + 1),
+      // id: String(notes.length + 1),
     }
 
-    setNotes(notes.concat(noteObject))
-    setNewNote('')
+    // axios
+    noteService
+      .create(noteObject)
+      // .post('http://localhost:3001/notes', noteObject)
+      .then(adedNote => {
+        setNotes(notes.concat(adedNote))
+        setNewNote('')
+        // console.log(adedNote)
+      })
+
   }
   // console.log(notes);    
 
@@ -67,7 +87,11 @@ const App = () => {
       </div>
       <ul>
         {notesToShow.map((note) => 
-          <Note key={note.id} note={note} />
+          <Note
+            key={note.id}
+            note={note}
+            toggleImportance={() => toggleImportanceOf(note.id)}
+          />
         )}        
       </ul>
       <form onSubmit={addNote}>

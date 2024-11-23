@@ -4,6 +4,7 @@ import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import contactService from './services/contacts'
 
 
 const App = () => {
@@ -13,12 +14,14 @@ const App = () => {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/persons")
+    contactService
+      .getAll()
       .then(response => {
-        setPersons(response.data)
+        setPersons(response)        
       })
-  }, [])
+    }, []
+  )
+  // console.log("hi from effect");
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -41,10 +44,15 @@ const App = () => {
     }
     else {
       const newPerson = {name: newName, number: newNumber}
-      const newPersons = persons.concat(newPerson)
-      setPersons(newPersons)
-      setNewName('')
-      setNewNumber('')
+      contactService
+        .addContact(newPerson)
+        .then(newContact => {
+          setPersons(persons.concat(newContact))
+          setNewName('')
+          setNewNumber('')
+        })
+      // const newPersons = persons.concat(newPerson)
+      // setPersons(newPersons)
     }    
   }
 
