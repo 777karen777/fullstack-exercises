@@ -38,10 +38,26 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    const result = persons.findIndex(person => person.name === newName)
-    // console.log(result);
-    if(result !== -1) {
-      alert(`${newName} is already added to phonebook`)
+    const personIndex = persons.findIndex(person => person.name === newName)
+    // const numberIndex = persons.findIndex(person => person.number === newNumber)
+
+    // console.log(personIndex);
+    if(personIndex !== -1) {
+      if(persons[personIndex].number === newNumber)
+        alert(`${newName} is already added to phonebook`)
+      else {
+        const result = confirm(`${persons[personIndex].name} is already added to phonebook, replace the old number with a new one?`)
+        if (result) {
+          const updatedPerson = {...persons[personIndex], number: newNumber }
+          contactService
+            .updateNumber(updatedPerson)
+            .then(updated => {
+              setPersons(persons.map(person => person.id === updated.id ? updated : person))
+              setNewName('')
+              setNewNumber('')
+            })
+        }
+      }
     }
     else {
       const newPerson = {name: newName, number: newNumber}
