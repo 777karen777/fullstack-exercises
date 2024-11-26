@@ -4,6 +4,7 @@ import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 import contactService from './services/contacts'
 
 
@@ -12,6 +13,8 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [search, setSearch] = useState('')
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [notificationColor, setNotificationColor] = useState('green')
 
   useEffect(() => {
     contactService
@@ -36,6 +39,16 @@ const App = () => {
     setSearch(event.target.value)
   }
 
+  const printMessage = (message, color) => {
+    console.log(color);
+    
+    setNotificationColor(color)
+    setSuccessMessage(message)
+    setTimeout(() => {
+      setSuccessMessage(null)
+    }, 5000)
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
     const personIndex = persons.findIndex(person => person.name === newName)
@@ -52,18 +65,26 @@ const App = () => {
           contactService
             .updateNumber(updatedPerson)
             .then(updated => {
+              printMessage("Persons number is changed successfully!", "green")
               setPersons(persons.map(person => person.id === updated.id ? updated : person))
               setNewName('')
               setNewNumber('')
             })
+            .catch(() => {
+              printMessage(`Information of ${persons[personIndex].name} has already been removed from server`, 'red')
+              setPersons(persons.filter(person => person.id !== persons[personIndex].id))
+              setNewName('')
+              setNewNumber('')
+            })
+          }
         }
       }
-    }
-    else {
-      const newPerson = {name: newName, number: newNumber}
-      contactService
+      else {
+        const newPerson = {name: newName, number: newNumber}
+        contactService
         .addContact(newPerson)
         .then(newContact => {
+          printMessage("New persons number is added successfully!", 'green')
           setPersons(persons.concat(newContact))
           // console.log(persons)
           setNewName('')
@@ -94,6 +115,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} notificationColor={notificationColor}/>
 
       <Filter search={search} handleSearch={handleSearch} />
       
