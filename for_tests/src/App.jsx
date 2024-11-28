@@ -1,127 +1,55 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import axios from 'axios'
-import Note from "./components/Note"
-import Notification from "./components/Notification"
-import noteService from "./services/notes"
-
-
-const Footer = () => {
-  const footerstile = {
-    color: 'green',
-    fontStile: 'italic',
-    fontSize: 16
-  }
-  return (
-    <div style={footerstile}>
-      <br />
-      <em>Note app, Department of Computer Science, University of Helsinki 2024</em>
-
-    </div>
-  )
-}
 
 const App = () => {
-  const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState('')
-  const [showAll, setShowAll] = useState(true)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [value, setValue] = useState('')
+  const [rates, setRates] = useState({})
+  const [currency, setCurrency] = useState(null)
 
-  const toggleImportanceOf = (id) => {
-    // const url = `http://localhost:3001/notes/${id}`
-    const noteToChange = notes.find(n => n.id === id)
-    const changedNote = {...noteToChange, important: !noteToChange.important}
+  useEffect(() => {
+    console.log('effect run, currency is now', currency);
 
-    // axios.put(url, changedNote)
-    noteService
-      .update(id, changedNote)
-      .then(returnedNote => {
-        setNotes(notes.map(n => n.id === id ? returnedNote : n))
-      })
-      .catch(error => {
-        setErrorMessage(
-          `Note '${noteToChange.content}' was already removed from server`
-        )
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
-        setNotes(notes.filter(n => n.id !== id))
-        // console.log(error)
-      })
-    console.log(`importance of  ${id} needs to be toggled`)
-  }  
+    if(currency) {
+      console.log('fetching exchange rates...');
+      axios
+        .get(`https://open.er-api.com/v6/latest/${currency}`)
+        .then(response => {
+          console.log(response);
+          
+          setRates(response.data.rates)
+        })      
+    }    
+  }, [currency])
 
-  const hook = () => {
-    // console.log('effect'); 
-    noteService
-      .getAll()
-      .then(initialNotes => {
-        // console.log('promise fulfilled');
-        setNotes(initialNotes)
-      })
+  const handleChange = (event) => {
+    setValue(event.target.value)
   }
-  useEffect(hook, [])
-  // console.log('render', notes.length, 'notes');
-  
 
-
-  const handleNoteChange = (event) => {
-    // console.log(event.target)
-    setNewNote(event.target.value) 
-
- 
-  }
-  
-  const addNote = (event) => {
+  const onSearch = (event) => {
     event.preventDefault()
-    const noteObject = {
-      content: newNote,
-      important: Math.random() < 0.5,
-      // id: String(notes.length + 1),
-    }
-
-    // axios
-    noteService
-      .create(noteObject)
-      // .post('http://localhost:3001/notes', noteObject)
-      .then(adedNote => {
-        setNotes(notes.concat(adedNote))
-        setNewNote('')
-        // console.log(adedNote)
-      })
-
+    setCurrency(value)
   }
-  // console.log(notes);    
 
-  const notesToShow = showAll
-    ? notes
-    : notes.filter(note => note.important === true)
+  const st = {
+    
+      backgroundColor: '#f4f4f4', /* Light gray background */
+      padding: 10,            /* Add padding */
+      borderRadius: 5,       /* Rounded corners */
+      fontFamily: 'monospace',   /* Monospace font */
+      overflowX: 'auto'         /* Horizontal scrolling for long text */
+    
+    
+  }
 
   return (
     <div>
-      <h1>Notes</h1>
-      <Notification message={errorMessage}/>
-      <div>
-        <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? 'important' : 'all'}
-        </button>
-      </div>
-      <ul>
-        {notesToShow.map((note) => 
-          <Note
-            key={note.id}
-            note={note}
-            toggleImportance={() => toggleImportanceOf(note.id)}
-          />
-        )}        
-      </ul>
-      <form onSubmit={addNote}>
-        <input
-          value={newNote}
-          onChange={handleNoteChange}
-        />
-        <button type="submit">save</button>
+      <form onSubmit={onSearch}>
+        currency: <input value={value} onChange={handleChange} />
+        <button type="submit">exchange rate</button>
       </form>
-      <Footer />
+      <pre style={st}>
+        {JSON.stringify(rates, null, 2)}
+      </pre>
     </div>
   )
 }
