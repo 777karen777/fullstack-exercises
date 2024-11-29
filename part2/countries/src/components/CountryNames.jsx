@@ -1,11 +1,12 @@
-const CountryNames = ({names}) => {
+const CountryNames = ({countries, countryView}) => {
+    // const names = countries.map(country => country.name.common)
 
     return (
         <ul style={{ listStyleType: 'none', paddingLeft: '0'}}>
-            {names.map(countryName => {
+            {countries.map(country => {
                 return (
-                    <li key={countryName}>
-                        {countryName}
+                    <li key={country.name.common}>
+                        {country.name.common} <button onClick={() => countryView(country)}>show</button>
                     </li>
                 )
             })}

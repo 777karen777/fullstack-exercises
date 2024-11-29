@@ -1,30 +1,51 @@
+import { useState, useEffect } from "react"
 import Notification from "./Notification"
 import CountryNames from "./CountryNames"
 import CountryDescription from "./CountryDescription"
 
 const Countries = ({notification, countries}) => {
-    // console.log(countryNames)
+    const [selectedCountry, setSelectedCountry] = useState(null)
 
+    useEffect(() => {
+        setSelectedCountry(null);
+    }, [countries]);
+
+    const countryView = (country) => {
+        setSelectedCountry(country)        
+    }
+    // console.log(countryNames)
+    
+    
     if(notification !== null) {
+        // if(selectedCountry) {
+        //     setSelectedCountry(null)        
+        // }
         return (
             <Notification notification={notification} />
         )        
     }
-
+    
     if(countries.length !== 1) {
-        const countryNames = countries.map(country => country.name.official)
+        
+        // setSelectedCountry(null)        
         return (
-            <CountryNames names={countryNames} />
+            <>
+                <CountryNames countries={countries} countryView={countryView} />
+                {selectedCountry && 
+                <CountryDescription country={selectedCountry} />
+            }
+            </>
         )
     }
+    
+    // if(selectedCountry) {
+    //     setSelectedCountry(null)        
+    // }
+    // setSelectedCountry(null)        
 
     return(
         <CountryDescription country={countries[0]} />
-    )
-
-
-
-    
+    ) 
 
 }
 
