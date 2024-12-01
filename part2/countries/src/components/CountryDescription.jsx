@@ -1,10 +1,12 @@
+import Weather from "./Weather"
+
 const CountryDescription = ({country}) => {
     // console.log(country)
     const name = country.name.common
     const capital = country.capital
     const flagSource = country.flags.png
     const languages = country.languages ? Object.values(country.languages) : []
-    // console.log(languages)
+    // console.log(country)
     
     return (
         <div>
@@ -18,7 +20,7 @@ const CountryDescription = ({country}) => {
             ))}</ul>
             <img src={flagSource} alt={`Flag of ${name}`} style={{width: '150px', height: '150px'}} />
 
-
+            <Weather country={country} />
         </div>
     )
 }

@@ -39,6 +39,7 @@ const App = () => {
       
   }
   // console.log(value)
+  // console.log(import.meta.env.SSR)
 
   useEffect(() => {
     axios
