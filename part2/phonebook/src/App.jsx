@@ -102,7 +102,7 @@ const App = () => {
         .deleteContact(id)
         .then(deleted => {
           setPersons(persons.filter(person => {
-            return person.id !== deleted.id
+            return person.id !== id
           }))
           // console.log(persons)
         })
