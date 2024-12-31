@@ -51,6 +51,12 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
+
+    if (!newName.trim() || !newNumber.trim()) {
+      alert("Both name and number fields must be filled!");
+      return;
+    }
+
     const personIndex = persons.findIndex(person => person.name === newName)
     // const numberIndex = persons.findIndex(person => person.number === newNumber)
 
