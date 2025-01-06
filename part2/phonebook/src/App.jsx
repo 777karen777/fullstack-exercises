@@ -76,11 +76,14 @@ const App = () => {
               setNewName('')
               setNewNumber('')
             })
-            .catch(() => {
-              printMessage(`Information of ${persons[personIndex].name} has already been removed from server`, 'red')
-              setPersons(persons.filter(person => person.id !== persons[personIndex].id))
-              setNewName('')
-              setNewNumber('')
+            .catch((error) => {
+              // console.log(error)
+              printMessage(error.response.data.error, 'red')
+
+              // printMessage(`Information of ${persons[personIndex].name} has already been removed from server`, 'red')
+              // setPersons(persons.filter(person => person.id !== persons[personIndex].id))
+              // setNewName('')
+              // setNewNumber('')
             })
           }
         }
