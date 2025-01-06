@@ -40,7 +40,7 @@ const App = () => {
   }
 
   const printMessage = (message, color) => {
-    console.log(color);
+    // console.log(color);
     
     setNotificationColor(color)
     setSuccessMessage(message)
@@ -88,14 +88,18 @@ const App = () => {
       else {
         const newPerson = {name: newName, number: newNumber}
         contactService
-        .addContact(newPerson)
-        .then(newContact => {
-          printMessage("New persons number is added successfully!", 'green')
-          setPersons(persons.concat(newContact))
-          // console.log(persons)
-          setNewName('')
-          setNewNumber('')
-        })
+          .addContact(newPerson)
+          .then(newContact => {
+            printMessage("New persons number is added successfully!", 'green')
+            setPersons(persons.concat(newContact))
+            // console.log(persons)
+            setNewName('')
+            setNewNumber('')
+          })
+          .catch(error => {
+            console.log(error.response.data.error)
+            printMessage(error.response.data.error, 'red')
+          })
       // const newPersons = persons.concat(newPerson)
       // setPersons(newPersons)
     }    
