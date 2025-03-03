@@ -1,28 +1,36 @@
 import axios from "axios";
-
 const baseUrl = '/api/notes'
 
-const getAll = () => {
-    const request = axios.get(baseUrl)
-    const nonExisting = {
-        id: 1000,
-        content: 'This note is not saved to server',
-        important: true,
+let token = null
+
+const setToken = newToken => {
+    token = `Bearer ${newToken}`
+}
+
+const getAll = async () => {
+    const response = await axios.get(baseUrl)
+    // const nonExisting = {
+    //     id: 1000,
+    //     content: 'This note is not saved to server',
+    //     important: true,
+    // }
+    
+    return Array.isArray(response.data) ? response.data : []
+   
+}
+
+const create = async newObject => {
+    const config = {
+        headers: { Authorization: token },
     }
-    return request.then(response => {
-        const data = Array.isArray(response.data) ? response.data : [];
-        return data.concat(nonExisting);
-    })
+
+    const response = await axios.post(baseUrl, newObject, config)
+    return response.data
 }
 
-const create = newObject => {
-    const request = axios.post(baseUrl, newObject)
-    return request.then(response => response.data)
+const update = async (id, newObject) => {
+    const response = await axios.put(`${baseUrl}/${id}`, newObject)
+    return response.data
 }
 
-const update = (id, newObject) => {
-    const request = axios.put(`${baseUrl}/${id}`, newObject)
-    return request.then(response => response.data)
-}
-
-export default { getAll, create, update }
+export default { getAll, create, update, setToken }
